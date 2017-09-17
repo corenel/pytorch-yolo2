@@ -89,7 +89,7 @@ def nms(boxes, nms_thresh):
 
     det_confs = torch.zeros(len(boxes))
     for i in range(len(boxes)):
-        det_confs[i] = 1-boxes[i][4]                
+        det_confs[i] = 1-boxes[i][4]
 
     _,sortIds = torch.sort(det_confs)
     out_boxes = []
@@ -111,7 +111,7 @@ def convert2cpu_long(gpu_matrix):
     return torch.LongTensor(gpu_matrix.size()).copy_(gpu_matrix)
 
 def get_region_boxes(output, conf_thresh, num_classes, anchors, num_anchors, only_objectness=1, validation=False):
-    anchor_step = len(anchors)/num_anchors
+    anchor_step = len(anchors)//num_anchors
     if output.dim() == 3:
         output = output.unsqueeze(0)
     batch = output.size(0)
@@ -142,7 +142,7 @@ def get_region_boxes(output, conf_thresh, num_classes, anchors, num_anchors, onl
     cls_max_confs = cls_max_confs.view(-1)
     cls_max_ids = cls_max_ids.view(-1)
     t1 = time.time()
-    
+
     sz_hw = h*w
     sz_hwa = sz_hw*num_anchors
     det_confs = convert2cpu(det_confs)
@@ -166,7 +166,7 @@ def get_region_boxes(output, conf_thresh, num_classes, anchors, num_anchors, onl
                         conf =  det_confs[ind]
                     else:
                         conf = det_confs[ind] * cls_max_confs[ind]
-    
+
                     if conf > conf_thresh:
                         bcx = xs[ind]
                         bcy = ys[ind]
@@ -385,7 +385,7 @@ def scale_bboxes(bboxes, width, height):
         dets[i][2] = dets[i][2] * width
         dets[i][3] = dets[i][3] * height
     return dets
-      
+
 def file_lines(thefilepath):
     count = 0
     thefile = open(thefilepath, 'rb')
@@ -402,7 +402,7 @@ def get_image_size(fname):
     from draco'''
     with open(fname, 'rb') as fhandle:
         head = fhandle.read(24)
-        if len(head) != 24: 
+        if len(head) != 24:
             return
         if imghdr.what(fname) == 'png':
             check = struct.unpack('>i', head[4:8])[0]
@@ -414,15 +414,15 @@ def get_image_size(fname):
         elif imghdr.what(fname) == 'jpeg' or imghdr.what(fname) == 'jpg':
             try:
                 fhandle.seek(0) # Read 0xff next
-                size = 2 
-                ftype = 0 
+                size = 2
+                ftype = 0
                 while not 0xc0 <= ftype <= 0xcf:
                     fhandle.seek(size, 1)
                     byte = fhandle.read(1)
                     while ord(byte) == 0xff:
                         byte = fhandle.read(1)
                     ftype = ord(byte)
-                    size = struct.unpack('>H', fhandle.read(2))[0] - 2 
+                    size = struct.unpack('>H', fhandle.read(2))[0] - 2
                 # We are at a SOFn block
                 fhandle.seek(1, 1)  # Skip `precision' byte.
                 height, width = struct.unpack('>HH', fhandle.read(4))
