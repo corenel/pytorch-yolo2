@@ -115,3 +115,15 @@ Change the code in normalize_cpu to make the same result
 normalize_cpu:
 x[index] = (x[index] - mean[f])/(sqrt(variance[f] + .00001f));
 ``` 
+#### Training on your own data
+1. Padding your images into square size and produce the corresponding label files.
+2. Modify the resize strageties in listDataset.
+3. Add warm up learning rate 0.1 (scales=0.1,10,.1,.1)
+4. Train your model as VOC does.
+
+---
+#### License
+MIT License (see LICENSE file).
+
+#### Contribution
+Thanks for the contributions from @iceflame89 for the image augmentation and @huaijin-chen for focal loss.
